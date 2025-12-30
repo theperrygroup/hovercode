@@ -77,30 +77,63 @@ class HovercodesClient(BaseClient):
 
         Endpoint: `POST /hovercode/create/`
 
+        QR codes are **static** by default. Set `dynamic=True` to create a **dynamic**
+        QR code, which can be updated later.
+
         Args:
             workspace: Workspace ID from your Hovercode settings.
-            qr_data: QR payload. For `qr_type="Link"` it must be a valid URL.
-            qr_type: QR type. Currently documented values are `"Link"` (default)
-                and `"Text"`.
-            dynamic: Whether to create a dynamic QR code. Defaults to `False`.
+            qr_data: QR payload. For `qr_type="Link"` this should be a valid URL.
+                For `qr_type="Text"` this can be any plain text.
+            qr_type: QR type. Accepts `QrType` or a string. Currently documented
+                values are `"Link"` (default) and `"Text"`.
+            dynamic: Whether to create a dynamic QR code. Defaults to `False` when
+                omitted.
             display_name: Optional internal name for organization in Hovercode.
-            domain: Optional custom domain to use for dynamic QR shortlinks.
+            domain: Optional custom domain to use for dynamic QR shortlinks. The
+                upstream docs note this only applies to dynamic codes.
             generate_png: If `True`, include PNG/SVG file URLs in the response.
+                The upstream docs note this slows down the create response.
             gps_tracking: Whether to enable GPS tracking (dynamic codes only).
             error_correction: Error correction level: `"L"`, `"M"`, `"Q"`, `"H"`.
-            size: Size in pixels (width).
+                The upstream docs state it defaults to `Q` without a logo and `H`
+                with a logo.
+            size: Size in pixels (width). The upstream docs state default is 220.
             logo_url: Optional logo image URL to embed in the QR code.
             logo_round: If `True`, force the logo into a circle.
-            primary_color: Primary HEX color (including `#`).
+            primary_color: Primary HEX color (including `#`). Upstream default is
+                `#111111`.
             background_color: Background HEX color (including `#`).
-            pattern: Pattern style (e.g. `"Original"`, `"Diamonds"`).
-            eye_style: Eye style (e.g. `"Square"`, `"Rounded"`).
-            frame: Frame name (e.g. `"circle-viewfinder"`).
+            pattern: Pattern style. Accepts `Pattern` or a string (e.g.
+                `"Original"`, `"Diamonds"`).
+            eye_style: Eye style. Accepts `EyeStyle` or a string (e.g. `"Square"`,
+                `"Rounded"`).
+            frame: Frame name. Accepts `Frame` or a string (e.g.
+                `"circle-viewfinder"`).
             has_border: Whether to enable frame border option.
             text: Optional frame text (only applies to some frames).
 
         Returns:
             The created QR code object as returned by the API.
+
+        Raises:
+            hovercode.exceptions.ApiError: For non-2xx API responses.
+            ValidationError: If the API returns an unexpected response type.
+
+        Example:
+            ```python
+            from hovercode import HovercodeClient
+            from hovercode.enums import Frame, Pattern
+
+            client = HovercodeClient()
+            qr = client.hovercodes.create(
+                workspace="YOUR-WORKSPACE-ID",
+                qr_data="https://example.com",
+                dynamic=True,
+                frame=Frame.CIRCLE_VIEWFINDER,
+                pattern=Pattern.DIAMONDS,
+            )
+            print(qr["id"])
+            ```
         """
 
         payload: JsonObject = {
@@ -171,6 +204,19 @@ class HovercodesClient(BaseClient):
         Returns:
             A paginated response object containing `count`, `next`, `previous`,
             and `results`.
+
+        Example:
+            ```python
+            from hovercode import HovercodeClient
+
+            client = HovercodeClient()
+            page_1 = client.hovercodes.list_for_workspace(
+                "YOUR-WORKSPACE-ID",
+                q="twitter",
+            )
+            print(page_1["count"])
+            print(page_1["results"][:2])
+            ```
         """
 
         params: dict[str, QueryParamValue] = {}
@@ -199,6 +245,11 @@ class HovercodesClient(BaseClient):
 
         Returns:
             The QR code object as returned by the API.
+
+        Notes:
+            The upstream docs note that even if you did not set `generate_png=True`
+            during creation, retrieving the QR code later may include `svg_file`
+            and `png` URLs once the files are available.
         """
 
         result = super().get(f"hovercode/{qr_code_id}/")
@@ -231,6 +282,16 @@ class HovercodesClient(BaseClient):
 
         Raises:
             ValidationError: If `page_size` is greater than 200.
+
+        Example:
+            ```python
+            from hovercode import HovercodeClient
+
+            client = HovercodeClient()
+            activity = client.hovercodes.get_activity("QR-CODE-ID", page_size=50)
+            print(activity["count"])
+            print(activity["results"][:3])
+            ```
         """
 
         if page_size is not None and page_size > 200:
@@ -317,14 +378,35 @@ class HovercodesClient(BaseClient):
 
         Args:
             qr_code_id: QR code ID (UUID).
-            tags: List of tag objects, e.g. `[{\"title\": \"my tag\"}]`. The API
-                documentation describes adding tags by title or ID.
+            tags: List of tag objects.
+
+                You can pass either:
+
+                - `TagInput(title=...)` / `TagInput(id=...)` (recommended), or
+                - raw dicts like `{\"title\": \"my tag\"}` / `{\"id\": \"TAG-ID\"}`.
+
+                The upstream API docs describe adding tags by title or by ID.
 
         Returns:
             The QR code object as returned by the API.
 
         Raises:
             ValidationError: If `tags` is empty.
+
+        Example:
+            ```python
+            from hovercode import HovercodeClient
+            from hovercode.models import TagInput
+
+            client = HovercodeClient()
+            client.hovercodes.add_tags(
+                "QR-CODE-ID",
+                [
+                    TagInput(title="marketing"),
+                    {"title": "campaign-2025"},
+                ],
+            )
+            ```
         """
 
         if not tags:
@@ -360,6 +442,14 @@ class HovercodesClient(BaseClient):
 
         Returns:
             Empty dict for a successful delete (API returns HTTP 204).
+
+        Example:
+            ```python
+            from hovercode import HovercodeClient
+
+            client = HovercodeClient()
+            client.hovercodes.delete_hovercode("QR-CODE-ID")
+            ```
         """
 
         result = super().delete(f"hovercode/{qr_code_id}/delete/")

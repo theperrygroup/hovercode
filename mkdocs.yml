@@ -1,5 +1,7 @@
 site_name: Hovercode Python SDK
-site_url: https://hovercode.com/
+site_url: https://theperrygroup.github.io/hovercode/
+repo_url: https://github.com/theperrygroup/hovercode
+edit_uri: edit/main/docs/
 
 theme:
   name: material
@@ -19,6 +21,7 @@ plugins:
 
 markdown_extensions:
   - admonition
+  - tables
   - pymdownx.superfences
   - pymdownx.highlight
   - pymdownx.inlinehilite

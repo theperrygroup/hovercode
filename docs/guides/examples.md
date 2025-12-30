@@ -103,3 +103,51 @@ verify_signature_or_raise(
 )
 ```
 
+### Pagination loop (list hovercodes)
+
+The list endpoint is paginated. You can request additional pages with `page=...`.
+
+```python
+from hovercode import HovercodeClient
+
+client = HovercodeClient()
+
+page = 1
+all_results: list[dict] = []
+
+while True:
+    payload = client.hovercodes.list_for_workspace("YOUR-WORKSPACE-ID", page=page)
+    all_results.extend(payload["results"])
+
+    if not payload.get("next"):
+        break
+    page += 1
+
+print(len(all_results))
+```
+
+### Webhook verification (Django example)
+
+You must verify the `X-Signature` header against your webhook secret using the **raw request body**.
+
+```python
+from django.http import JsonResponse
+
+from hovercode.webhooks import verify_signature_or_raise
+
+
+def hovercode_webhook(request):
+    secret = "YOUR_WEBHOOK_SECRET"
+    raw_payload = request.body  # raw bytes
+    signature = request.headers.get("X-Signature", "")
+
+    try:
+        verify_signature_or_raise(secret=secret, raw_payload=raw_payload, received_signature=signature)
+    except Exception:
+        return JsonResponse({"error": "Invalid signature"}, status=400)
+
+    # If signature is valid, parse JSON and handle it
+    # payload = json.loads(raw_payload.decode("utf-8"))
+    return JsonResponse({"ok": True})
+```
+

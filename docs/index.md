@@ -8,6 +8,14 @@ It supports creating static or dynamic QR codes and managing them programmatical
 Do **not** call the Hovercode API directly from a browser/front-end app. Your API token
 must be kept private and should only be used from a trusted backend.
 
+### Static vs dynamic QR codes (quick explanation)
+
+- **Static QR**: the destination (`qr_data`) is embedded directly in the code and **cannot be changed**
+  after creation.
+- **Dynamic QR**: the QR code points to a shortlink you control; you can **update the destination later**.
+
+In the Hovercode API, QR codes are static by default. Set `dynamic=True` when creating to make them dynamic.
+
 ### Quickstart
 
 ```python
@@ -24,6 +32,13 @@ qr = client.hovercodes.create(
 print(qr["id"])
 ```
 
+### What you need from Hovercode
+
+- **API token**: used for the `Authorization: Token …` header
+- **Workspace ID**: required by the create/list endpoints
+
+You can find both in your Hovercode settings area while logged in.
+
 ### What you can do
 
 - **Create QR codes** (static or dynamic)
@@ -34,6 +49,18 @@ print(qr["id"])
 - **Get tracking activity** for dynamic codes
 - **Delete QR codes**
 - **Verify webhook signatures** (for scan webhooks)
+
+### Common response fields (glossary)
+
+Hovercode responses may include fields like:
+
+- `id`: QR code UUID
+- `qr_data`: the destination/content
+- `qr_type`: `"Link"` or `"Text"`
+- `dynamic`: whether the code is dynamic
+- `shortlink_url`: short URL (dynamic codes)
+- `svg`: SVG string (can be embedded or written to a `.svg` file)
+- `svg_file` / `png`: hosted file URLs (may appear on create if `generate_png=True`, or later via get)
 
 ### Where to go next
 

@@ -62,6 +62,34 @@ class BaseClient:
     - Timeouts and retries with exponential backoff
     - Consistent JSON decoding and error mapping
 
+    Environment variables:
+        - `HOVERCODE_API_TOKEN`: API token (used when `api_token` is not provided)
+        - `HOVERCODE_TIMEOUT_SECONDS`: request timeout (default: 10.0)
+        - `HOVERCODE_MAX_RETRIES`: retry count (default: 3)
+        - `HOVERCODE_RETRY_BACKOFF_SECONDS`: base backoff seconds (default: 0.5)
+
+    Retry behavior:
+        Retries are attempted for transient failures:
+
+        - HTTP 500/502/503/504 responses
+        - `requests` transport exceptions (connection errors, timeouts, etc.)
+
+        Backoff is exponential: `retry_backoff_seconds * (2 ** attempt)`.
+
+    Error mapping:
+        Non-2xx responses are mapped to exception types:
+
+        - 400 → `ValidationError`
+        - 401 → `AuthenticationError`
+        - 404 → `NotFoundError`
+        - 429 → `RateLimitError`
+        - 5xx → `ServerError`
+        - otherwise → `ApiError`
+
+    Response decoding:
+        - For HTTP 204, returns `{}`.
+        - Attempts to decode JSON; falls back to `response.text` if JSON decoding fails.
+
     Args:
         api_token: Hovercode API token. If not provided, `HOVERCODE_API_TOKEN`
             is used.

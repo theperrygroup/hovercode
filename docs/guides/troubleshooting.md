@@ -33,6 +33,10 @@ export HOVERCODE_MAX_RETRIES="5"
 export HOVERCODE_RETRY_BACKOFF_SECONDS="0.5"
 ```
 
+!!! note
+    Retries are applied to transient server failures (500/502/503/504) and network
+    exceptions. Rate limits (429) are **not** retried automatically.
+
 ### Understanding errors
 
 All API errors inherit from `hovercode.exceptions.ApiError` and include:
@@ -60,3 +64,17 @@ except ApiError as exc:
     print(exc.status_code)
     print(exc.response_data)
 ```
+
+### Common HTTP status codes
+
+- **400 (ValidationError)**: invalid request body/params (e.g., missing required fields)
+- **401 (AuthenticationError)**: missing/invalid token
+- **404 (NotFoundError)**: wrong ID or resource doesn’t exist
+- **429 (RateLimitError)**: too many requests; slow down and retry later
+- **5xx (ServerError)**: transient Hovercode server issue; retries may succeed
+
+### Debugging tips
+
+- Print `exc.response_data` to see the upstream error payload.
+- Confirm the workspace ID and QR code ID are correct (UUIDs).
+- If `generate_png=True` feels slow, that’s expected (the API documents it as slower).

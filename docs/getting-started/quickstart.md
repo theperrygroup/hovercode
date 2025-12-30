@@ -16,6 +16,9 @@ qr = client.hovercodes.create(
 print(qr["id"])
 ```
 
+!!! tip
+    If you want hosted PNG/SVG URLs in the create response, pass `generate_png=True`.
+
 ### List QR codes in a workspace
 
 ```python
@@ -31,6 +34,28 @@ qr_id = qr["id"]
 qr_full = client.hovercodes.get_hovercode(qr_id)
 print(qr_full.get("svg_file"))
 print(qr_full.get("png"))
+```
+
+### Add tags
+
+```python
+from hovercode.models import TagInput
+
+client.hovercodes.add_tags(
+    qr_id,
+    [
+        TagInput(title="marketing"),
+        {"title": "campaign-2025"},
+    ],
+)
+```
+
+### Get tracking activity (dynamic codes)
+
+```python
+activity = client.hovercodes.get_activity(qr_id, page_size=50)
+print(activity["count"])
+print(activity["results"][:3])
 ```
 
 ### Update a QR code
