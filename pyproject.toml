@@ -41,6 +41,7 @@ dev = [
   "pytest-cov>=5.0.0",
   "pytest-mock>=3.14.0",
   "responses>=0.25.3",
+  "types-requests>=2.32.0",
   "twine>=5.1.1",
 ]
 dotenv = ["python-dotenv>=1.0.1"]
@@ -86,6 +87,10 @@ disallow_untyped_decorators = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = ["dotenv", "dotenv.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

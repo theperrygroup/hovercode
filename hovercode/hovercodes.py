@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Mapping, Optional, Sequence, Union, cast
+from typing import Mapping, Optional, Sequence, Union
 
 from hovercode.base_client import BaseClient, QueryParamValue
 from hovercode.enums import ErrorCorrection, EyeStyle, Frame, Pattern, QrType
@@ -149,7 +149,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
     def list_for_workspace(
         self,
@@ -187,7 +187,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
     def get_hovercode(self, qr_code_id: str) -> JsonObject:
         """Retrieve a previously created QR code.
@@ -208,7 +208,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
     def get_activity(
         self,
@@ -253,7 +253,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
     def update(
         self,
@@ -304,7 +304,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
     def add_tags(
         self,
@@ -348,7 +348,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
     def delete_hovercode(self, qr_code_id: str) -> JsonObject:
         """Delete a QR code permanently.
@@ -369,7 +369,7 @@ class HovercodesClient(BaseClient):
                 status_code=None,
                 response_data=result,
             )
-        return cast(JsonObject, result)
+        return result
 
 
 def _normalize_str_enum(value: Union[str, Enum]) -> str:

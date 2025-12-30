@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping, Optional, cast
+from typing import Mapping, Optional
 
 from hovercode.exceptions import ValidationError
 from hovercode.types import JsonArray, JsonObject, JsonValue
@@ -129,7 +129,7 @@ class PaginatedResponse:
                     status_code=None,
                     response_data=dict(data),
                 )
-            parsed_results.append(cast(JsonObject, item))
+            parsed_results.append(item)
 
         return cls(
             count=count, next=next_url, previous=previous_url, results=parsed_results
