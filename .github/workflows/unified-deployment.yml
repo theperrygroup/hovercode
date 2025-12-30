@@ -44,7 +44,12 @@ jobs:
 
   deploy-pages:
     needs: docs
-    if: ${{ vars.ENABLE_GITHUB_PAGES == 'true' }}
+    # NOTE: GitHub Pages deployments should come from the main branch. When this
+    # workflow runs on a Release event, the ref is a tag (e.g. v0.1.0), and many
+    # repos (including this one) protect the `github-pages` environment to only
+    # allow `main`. Skipping Pages deploys on releases avoids environment
+    # protection failures while still allowing PyPI publishing.
+    if: ${{ vars.ENABLE_GITHUB_PAGES == 'true' && github.event_name != 'release' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
