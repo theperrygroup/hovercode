@@ -1,0 +1,4 @@
+## Exceptions
+
+::: hovercode.exceptions
+

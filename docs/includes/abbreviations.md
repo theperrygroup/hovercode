@@ -1,0 +1,4 @@
+## Abbreviations
+
+- **QR**: Quick Response
+
