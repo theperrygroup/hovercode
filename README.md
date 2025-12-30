@@ -2,6 +2,10 @@
 
 Typed Python client for the Hovercode API (dynamic and static QR codes).
 
+### Documentation
+
+Project documentation is published on GitHub Pages: `https://theperrygroup.github.io/hovercode/`
+
 ### Installation
 
 ```bash
@@ -30,6 +34,16 @@ qr = client.hovercodes.create(
 
 print(qr["id"])
 print(qr["svg"][:80])
+```
+
+### Common operations
+
+```python
+qr_full = client.hovercodes.get_hovercode(qr["id"])
+activity = client.hovercodes.get_activity(qr["id"], page_size=50)
+
+client.hovercodes.update(qr["id"], display_name="New name")
+client.hovercodes.delete_hovercode(qr["id"])
 ```
 
 ### Notes

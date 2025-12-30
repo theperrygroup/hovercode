@@ -43,5 +43,6 @@ nav:
       - Overview: reference/index.md
       - Data types: reference/data-types.md
       - Exceptions: reference/exceptions.md
+      - Abbreviations: includes/abbreviations.md
       - Changelog: reference/changelog.md
 
