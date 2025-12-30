@@ -21,7 +21,7 @@ from hovercode.exceptions import (
 from hovercode.hovercodes import HovercodesClient
 from hovercode.models import PaginatedResponse, TagInput
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "ApiError",

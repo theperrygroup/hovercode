@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hovercode"
-version = "0.1.0"
+version = "0.1.1"
 description = "Typed Python client for the Hovercode QR code API."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -54,8 +54,10 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://hovercode.com/"
-Source = "https://hovercode.com/"
+Homepage = "https://theperrygroup.github.io/hovercode/"
+Source = "https://github.com/theperrygroup/hovercode"
+Issues = "https://github.com/theperrygroup/hovercode/issues"
+Changelog = "https://github.com/theperrygroup/hovercode/releases"
 
 [tool.setuptools]
 include-package-data = true
